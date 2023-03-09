@@ -17,7 +17,7 @@ class Book
   private
 
   def next_id
-    self.class.instance_variable_get(:@id_counter) || 0
+    @id_counter = self.class.instance_variable_get(:@id_counter) || 0
     self.class.instance_variable_set(:@id_counter, @id_counter + 1)
   end
 end
