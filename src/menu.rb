@@ -13,11 +13,9 @@ class Menu
       @options.each_with_index do |option, index|
         puts "#{index + 1}. #{option[0]}"
       end
-      puts '0. Quit'
-
       choice = gets.chomp.to_i
       if choice.zero?
-        puts 'Thank you using me'
+        @options.last[1].call # call the quit callback
         break
       elsif choice.positive? && choice <= @options.size
         @options[choice - 1][1].call

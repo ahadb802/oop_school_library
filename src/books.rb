@@ -14,6 +14,15 @@ class Book
     @rentals << rental
   end
 
+  def to_h
+    {
+      id: @id,
+      title: @title,
+      author: @author,
+      rentals: @rentals.map(&:to_h)
+    }
+  end
+
   private
 
   def next_id

@@ -8,6 +8,17 @@ class Teacher < Person
     @specialization = specialization
   end
 
+  def to_h
+    {
+      id: @id,
+      name: @name,
+      age: @age,
+      parent_permission: @parent_permission,
+      rentals: @rentals.map(&:to_h),
+      specialization: @specialization
+    }
+  end
+
   def can_use_services?
     true
   end

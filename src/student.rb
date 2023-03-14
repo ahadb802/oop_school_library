@@ -13,6 +13,17 @@ class Student < Person
     end
   end
 
+  def to_h
+    {
+      id: @id,
+      age: @age,
+      name: @name,
+      parent_permission: @parent_permission,
+      rentals: @rentals,
+      classroom: @classroom
+    }
+  end
+
   def play_hooky
     '¯\\(ツ)/¯'
   end
