@@ -4,6 +4,7 @@ require_relative './teacher'
 require_relative './books'
 require_relative './classroom'
 require_relative './rental'
+require 'json'
 
 class App
   attr_reader :people, :books, :rentals
@@ -12,6 +13,7 @@ class App
     @people = []
     @books = []
     @rentals = []
+    load_data
   end
 
   def list_people
@@ -53,7 +55,6 @@ class App
   end
 
   def create_teacher(age, name, specialization, parent_permission: true)
-    puts name
     teacher = Teacher.new(age, specialization, name, parent_permission: parent_permission)
     @people << teacher
     puts "Created new teacher with ID #{teacher.id} and name #{teacher.correct_name}"
@@ -114,5 +115,37 @@ class App
     else
       puts 'Invalid person ID'
     end
+  end
+
+  def quit
+    save_data
+    puts 'Thank you for using the app!'
+  end
+
+  private
+
+  def load_data
+    @books = load_from_file('books.json', Book)
+    @people = load_from_file('people.json', Person)
+    @rentals = load_from_file('rentals.json', Rental)
+  end
+
+  def save_data
+    save_to_file('books.json', @books)
+    save_to_file('people.json', @people)
+    save_to_file('rentals.json', @rentals)
+  end
+
+  def load_from_file(filename, class_type)
+    data = []
+    if File.exist?(filename)
+      json_data = File.read(filename)
+      data = JSON.parse(json_data).map { |obj| class_type.new(**obj) }
+    end
+    data
+  end
+
+  def save_to_file(filename, data)
+    File.write(filename, JSON.generate(data.map(&:to_h)))
   end
 end
