@@ -9,5 +9,5 @@ menu.add_option('Create a person', -> { app.create_person })
 menu.add_option('Create a book', -> { app.create_book })
 menu.add_option('Create a rental', -> { app.create_rental })
 menu.add_option('List all rentals for a given person id', -> { app.list_rentals })
-
+menu.add_option('Quit', -> { app.save_data })
 menu.show

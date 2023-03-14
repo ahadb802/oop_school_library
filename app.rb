@@ -4,6 +4,7 @@ require_relative './teacher'
 require_relative './books'
 require_relative './classroom'
 require_relative './rental'
+require 'json'
 
 class App
   attr_reader :people, :books, :rentals
@@ -12,6 +13,7 @@ class App
     @people = []
     @books = []
     @rentals = []
+    load_data
   end
 
   def list_people
@@ -113,6 +115,69 @@ class App
       end
     else
       puts 'Invalid person ID'
+    end
+  end
+
+  def save_data
+    save_people
+    save_books
+    save_rentals
+    puts 'Thanks For Using me'
+  end
+
+  def load_data
+    load_people
+    load_books
+    load_rentals
+  end
+
+  private
+
+  def save_people
+    File.write('people.json', JSON.pretty_generate(@people))
+  end
+
+  def save_books
+    File.write('books.json', JSON.pretty_generate(@books))
+  end
+
+  def save_rentals
+    File.write('rentals.json', JSON.pretty_generate(@rentals))
+  end
+
+  def load_people
+    return unless File.exist?('people.json')
+
+    @people = JSON.parse(File.read('people.json')).map do |person_data|
+      if person_data['Type'] == 'Student'
+        create_student(person_data['age'], person_data['name'], person_data['parent_permission'],
+                       classroom_label: person_data['classroom_label'])
+      else
+        create_teacher(person_data['age'], person_data['name'], person_data['specialization'],
+                       parent_permission: person_data['parent_permission'])
+      end
+    end
+  end
+
+  def load_books
+    return unless File.exist?('books.json')
+
+    @books = JSON.parse(File.read('books.json')).map do |book_data|
+      Book.new(book_data['title'], book_data['author'])
+    end
+  end
+
+  def load_rentals
+    return unless File.exist?('rentals.json')
+
+    @rentals = JSON.parse(File.read('rentals.json')).map do |rental_data|
+      person = @people.find { |p| p.name == rental_data['name'] }
+      book = @books.find { |b| b.title == rental_data['title'] }
+      if person
+        Rental.new(rental_data['date'], person, book)
+      else
+        puts "Could not find person with name #{rental_data['name']} for rental of book #{rental_data['title']}"
+      end
     end
   end
 end

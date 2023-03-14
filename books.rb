@@ -1,3 +1,5 @@
+require 'json'
+
 class Book
   attr_reader :id, :title, :author, :rentals
 
