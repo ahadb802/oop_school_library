@@ -1,4 +1,5 @@
 require_relative './app'
+
 class Menu
   def initialize
     @options = []
@@ -9,8 +10,8 @@ class Menu
   end
 
   def show
-    # app = App.new
-    # app.load_data
+    app = App.new
+    app.load_data
     loop do
       puts 'Please choose an option:'
       @options.each_with_index do |option, index|
@@ -18,7 +19,7 @@ class Menu
       end
       choice = gets.chomp.to_i
       if choice.zero?
-        puts 'Thanks For Using me'
+        app.save_data
         break
       elsif choice.positive? && choice <= @options.size
         @options[choice - 1][1].call
