@@ -5,7 +5,7 @@ require_relative './books'
 require_relative './classroom'
 require_relative './rental'
 require 'json'
-
+# rubocop:disable Metrics/ClassLength
 class App
   attr_reader :people, :books, :rentals
 
@@ -146,7 +146,7 @@ class App
 
   def save_books
     return unless @data_changed
-  
+
     # only save new data if it has changed since the last save
     books_data = @books.map(&:to_h)
     # write the updated data to the file, overwriting the existing file
@@ -158,17 +158,17 @@ class App
   def save_people
     # create a new hash for the data
     people_data = { people: @people.map(&:to_h) }
-  
+
     # write the updated data to the file
     File.write('people.json', JSON.pretty_generate(people_data))
   end
 
   def load_people
     return unless File.file?('people.json')
-  
+
     # read the existing data from the file
     people_data = JSON.parse(File.read('people.json'))
-  
+
     # create new person objects from the data
     people_data['people'].each do |person_data|
       if person_data['type'] == 'student'
@@ -177,8 +177,8 @@ class App
         student.instance_variable_set(:@id, person_data['id'])
         @people << student
       elsif person_data['type'] == 'teacher'
-        teacher = Teacher.new(person_data['age'], person_data['name'], person_data['specialization'], person_data['type'],
-                              parent_permission: person_data['parent_permission'])
+        teacher = Teacher.new(person_data['age'], person_data['name'], person_data['specialization'], person_data['type'], parent_permission: person_data['parent_permission']) # rubocop:disable Layout/LineLength
+
         teacher.instance_variable_set(:@id, person_data['id'])
         @people << teacher
       end
@@ -199,19 +199,17 @@ class App
 
   def load_rentals
     rentals_data = []
-    if File.file?('rentals.json')
-      rentals_data = JSON.parse(File.read('rentals.json'))
-    end
+    rentals_data = JSON.parse(File.read('rentals.json')) if File.file?('rentals.json')
     rentals_data.each do |rental_data|
       person = @people.find { |p| p.id == rental_data['person_id'] }
       book = @books.find { |b| b.id == rental_data['book_id'] }
-      if person && book
-        rental = Rental.new(rental_data['date'], person, book)
-        rental.instance_variable_set(:@id, rental_data['id'])
-        @rentals << rental
-        person.rentals << rental
-      end
+      next unless person && book
+
+      rental = Rental.new(rental_data['date'], person, book)
+      rental.instance_variable_set(:@id, rental_data['id'])
+      @rentals << rental
+      person.rentals << rental
     end
   end
-  
+  # rubocop:enable Metrics/ClassLength
 end
