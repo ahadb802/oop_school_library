@@ -1,7 +1,7 @@
 require_relative './nameable'
 
 class Person < Nameable
-  attr_accessor :id, :rentals, :name, :age
+  attr_accessor :id, :rentals, :name, :age, :parent_permission
 
   @id_counter = 0
   def initialize(age, name, parent_permission: true)

@@ -51,6 +51,7 @@ class App
     classroom = Classroom.new(classroom_label) if classroom_label
     student = Student.new(age, name, parent_permission: parent_permission, classroom: classroom)
     @people << student
+    save_people
     puts "Created new student with ID #{student.id} and name #{student.correct_name}"
   end
 
@@ -58,6 +59,7 @@ class App
     puts name
     teacher = Teacher.new(age, specialization, name, parent_permission: parent_permission)
     @people << teacher
+    save_people
     puts "Created new teacher with ID #{teacher.id} and name #{teacher.correct_name}"
   end
 
@@ -70,6 +72,7 @@ class App
 
     book = Book.new(title, author)
     @books << book
+    save_books
     puts "Created new book with ID #{book.id}, title '#{book.title}', and author '#{book.author}'"
   end
 
@@ -84,11 +87,19 @@ class App
   end
 
   def create_rental
-    puts 'What is the person id?'
+    puts 'What is the person ID?'
+    puts '==========================='
+    list_people
     person_id = gets.chomp.to_i
 
+    puts ''
+
     puts 'What is the book id?'
+    puts '============================='
+    list_books
     book_id = gets.chomp.to_i
+
+    puts ''
 
     puts 'What is the rental date? (YYYY-MM-DD)'
     date = gets.chomp
@@ -102,10 +113,13 @@ class App
     else
       puts 'Invalid person ID or book ID'
     end
+    save_rentals
   end
 
   def list_rentals
     puts 'What is the person id?'
+    puts ''
+    list_people
     person_id = gets.chomp.to_i
     person = @people.find { |p| p.id == person_id }
     if person
@@ -134,25 +148,65 @@ class App
   private
 
   def save_people
-    File.write('people.json', JSON.pretty_generate(@people))
+    people_json = []
+    @people.each do |person|
+      if person.class.to_s === 'Student'
+        people_json.push({
+          age: person.age,
+          name: person.correct_name,
+          classroom_label: person.classroom,
+          parent_permission: person.parent_permission,
+          Type: person.class
+        })
+      elsif person.class.to_s === 'Teacher'
+        people_json.push({
+          age: person.age,
+          name: person.correct_name,
+          specialization: person.specialization,
+          Type: person.class
+        })
+      end
+    end
+    File.write('people.json', JSON.pretty_generate(people_json))
   end
 
   def save_books
-    File.write('books.json', JSON.pretty_generate(@books))
+    books_json = []
+    @books.each do |book|
+      books_json.push({
+        title: book.title,
+        author: book.author
+      })
+    end
+    File.write('books.json', JSON.pretty_generate(books_json))
   end
 
   def save_rentals
-    File.write('rentals.json', JSON.pretty_generate(@rentals))
+    rentals_json = []
+    @rentals.each do |rental|
+      rentals_json.push({
+        book: {
+          title: rental.book.title,
+          author: rental.book.author,
+          id: rental.book.id
+        },
+        date: rental.date,
+        person: {
+          name: rental.person.name,
+          id: rental.person.id
+        }})
+    end
+    File.write('rentals.json', JSON.pretty_generate(rentals_json))
   end
 
   def load_people
     return unless File.exist?('people.json')
 
-    @people = JSON.parse(File.read('people.json')).map do |person_data|
+    JSON.parse(File.read('people.json')).map do |person_data|
       if person_data['Type'] == 'Student'
         create_student(person_data['age'], person_data['name'], person_data['parent_permission'],
                        classroom_label: person_data['classroom_label'])
-      else
+      elsif person_data['Type'] == 'Teacher'
         create_teacher(person_data['age'], person_data['name'], person_data['specialization'],
                        parent_permission: person_data['parent_permission'])
       end
@@ -171,8 +225,8 @@ class App
     return unless File.exist?('rentals.json')
 
     @rentals = JSON.parse(File.read('rentals.json')).map do |rental_data|
-      person = @people.find { |p| p.name == rental_data['name'] }
-      book = @books.find { |b| b.title == rental_data['title'] }
+      person = @people.find { |p| p.id == rental_data['person']['id'] }
+      book = @books.find { |b| b.id == rental_data['book']['id'] }
       if person
         Rental.new(rental_data['date'], person, book)
       else

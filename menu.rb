@@ -10,16 +10,14 @@ class Menu
   end
 
   def show
-    app = App.new
-    app.load_data
     loop do
       puts 'Please choose an option:'
       @options.each_with_index do |option, index|
         puts "#{index + 1}. #{option[0]}"
       end
       choice = gets.chomp.to_i
-      if choice.zero?
-        app.save_data
+      if choice.zero? || choice == 7
+        'Thanks for using this app!'
         break
       elsif choice.positive? && choice <= @options.size
         @options[choice - 1][1].call

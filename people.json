@@ -1,3 +1,23 @@
 [
-
+  {
+    "age": 18,
+    "name": "Javier",
+    "classroom_label": null,
+    "parent_permission": true,
+    "Type": "Student"
+  },
+  {
+    "age": 20,
+    "name": "Sebastian",
+    "classroom_label": null,
+    "parent_permission": true,
+    "Type": "Student"
+  },
+  {
+    "age": 18,
+    "name": "Humberto",
+    "classroom_label": null,
+    "parent_permission": true,
+    "Type": "Student"
+  }
 ]
