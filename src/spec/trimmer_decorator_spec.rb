@@ -11,7 +11,7 @@ describe TrimmerDecorator do
         expect(decorator.correct_name).to eq('Hello Worl')
       end
     end
-
+    #test case for trimmerDecorator 
     context 'when name length is less than or equal to MAX_NAME_LENGTH' do
       let(:nameable) { double('Nameable', correct_name: 'Hello') }
 
