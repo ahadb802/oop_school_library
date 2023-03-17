@@ -1,7 +1,7 @@
 require 'json'
 require 'date'
 require_relative '../person'
-require_relative '../books.rb'
+require_relative '../books'
 require_relative '../rental'
 
 RSpec.describe Person do
@@ -83,14 +83,14 @@ RSpec.describe Person do
 
     describe '#next_id' do
       context 'when the id_counter file exists' do
-        it "loads the ID counter from a file if it exists" do
+        it 'loads the ID counter from a file if it exists' do
           File.write('id_counter.json', { counter: 123 }.to_json)
           expect(book.send(:load_id_counter)).to eq(124)
         end
       end
 
       context 'when the id_counter file does not exist' do
-        it "returns 0 if the ID counter file does not exist" do
+        it 'returns 0 if the ID counter file does not exist' do
           allow(File).to receive(:exist?).with('id_counter.json').and_return(false)
           expect(book.send(:load_id_counter)).to eq(0)
         end

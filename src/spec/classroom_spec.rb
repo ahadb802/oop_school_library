@@ -1,6 +1,6 @@
 require_relative '../person'
 require_relative '../classroom'
-require_relative '../student.rb'
+require_relative '../student'
 require 'json'
 
 RSpec.describe Classroom do

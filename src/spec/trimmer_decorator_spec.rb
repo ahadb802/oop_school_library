@@ -1,5 +1,5 @@
 require_relative '../decorator'
-require_relative '../trimmer_decorator.rb'
+require_relative '../trimmer_decorator'
 
 describe TrimmerDecorator do
   let(:nameable) { double('Nameable', correct_name: 'Hello World') }
