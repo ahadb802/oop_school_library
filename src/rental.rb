@@ -10,4 +10,12 @@ class Rental
     book.rentals << self
     person.rentals << self
   end
+
+  def to_h
+    {
+      date: @date,
+      person_id: @person.id,
+      book_id: @book.id
+    }
+  end
 end

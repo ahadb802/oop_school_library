@@ -1,5 +1,4 @@
 require_relative './app'
-
 class Menu
   def initialize
     @options = []
@@ -16,10 +15,7 @@ class Menu
         puts "#{index + 1}. #{option[0]}"
       end
       choice = gets.chomp.to_i
-      if choice.zero? || choice == 7
-        'Thanks for using this app!'
-        break
-      elsif choice.positive? && choice <= @options.size
+      if choice.positive? && choice <= @options.size
         @options[choice - 1][1].call
       else
         puts 'Invalid choice, please try again.'
